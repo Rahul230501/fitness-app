@@ -1,0 +1,34 @@
+package com.fitness.activityservice.services;
+
+import com.fitness.activityservice.dto.ActivityRequest;
+import com.fitness.activityservice.dto.ActivityResponse;
+import com.fitness.activityservice.model.Activity;
+import com.fitness.activityservice.repository.ActivityRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+
+@Service
+@AllArgsConstructor
+public class ActivityService {
+
+    private final  ActivityRepository activityRepository;
+    private final ModelMapper modelMapper;
+
+    public ActivityResponse trackActivity(ActivityRequest activityRequest) {
+
+        Activity activity = Activity.builder()
+                .userId(activityRequest.getUserId())
+                .type(activityRequest.getType())
+                .duration(activityRequest.getDuration())
+                .caloriesBurned(activityRequest.getCaloriesBurned())
+                .startTime(activityRequest.getStartTime())
+                .additionalMetrics(activityRequest.getAdditionalMetrics()).build();
+
+        Activity savedActivity = activityRepository.save(activity);
+
+        return modelMapper.map(savedActivity, ActivityResponse.class);
+    }
+}

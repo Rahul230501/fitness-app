@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: activity-service
+
+  mongodb:
+      ***REMOVED***
+      database: activitydb
+server:
+  port: 8082
+
