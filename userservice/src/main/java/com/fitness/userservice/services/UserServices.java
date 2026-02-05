@@ -31,4 +31,8 @@ public class UserServices {
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         return modelMapper.map(user, UserResponse.class);
     }
+
+    public Boolean checkUserExist(String id) {
+        return userRepository.existsById(id);
+    }
 }
