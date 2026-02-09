@@ -1,22 +1,52 @@
 package com.fitness.aiservice.service;
 
 import com.fitness.aiservice.model.Activity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.fitness.aiservice.model.Recommendation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ActivityAiService {
 
     private final GeminiService geminiService;
 
-    public void generateRecommendation(Activity activity){
-        geminiService.getRecommendation(createPromptForActivity(activity));
+    public Recommendation generateRecommendation(Activity activity){
+        String response = geminiService.getRecommendation(createPromptForActivity(activity));
+        return processAiResponse(response);
+    }
+
+    private Recommendation processAiResponse(String response) {
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response);
+            JsonNode textNode = jsonNode.path("candidates")
+                    .get(0)
+                    .path("content")
+                    .path("parts")
+                    .get(0)
+                    .path("text");
+            String jsonContent = textNode.asString()
+                    .replace("```json\\n","")
+                    .replace("\\n","")
+                    .trim();
+            JsonNode analysisJson = objectMapper.readTree(jsonContent);
+            JsonNode analysisNode = analysisJson.path("analysis");
+            System.out.println("Ai response :"+ jsonContent);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String createPromptForActivity(Activity activity) {
+
         return """
             You are an AI fitness recommendation engine used in a production-grade health application.
             
@@ -36,12 +66,29 @@ public class ActivityAiService {
             - Do NOT change JSON structure
             - JSON must be the final output
             
-            REQUIRED JSON STRUCTURE:
+            REQUIRED JSON FORMAT:
             {
-              "recommendation": "",
-              "improvements": [],
-              "suggestions": [],
-              "safety": []
+              "analysis": {
+                "overall": "",
+                "pace": "",
+                "heartRate": "",
+                "caloriesBurned": ""
+              },
+              "improvements": [
+                {
+                  "area": "",
+                  "recommendation": ""
+                }
+              ],
+              "suggestions": [
+                {
+                  "workout": "",
+                  "description": ""
+                }
+              ],
+              "safety": [
+                ""
+              ]
             }
             
             Workout Data:

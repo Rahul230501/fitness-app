@@ -51,9 +51,6 @@ public class GeminiService {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println(response+"this is response from ai");
-
-        log.info("Ai response :" , response);
 
         return response;
     }
