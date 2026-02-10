@@ -3,7 +3,7 @@ spring:
     name: activity-service
 
   mongodb:
-      ***REMOVED***
+      uri:  mongodb+srv://rahulkumar230501_db_user:youpassword@activity.58cix33.mongodb.net/?appName=Activity
       database: activitydb
 
   kafka:
