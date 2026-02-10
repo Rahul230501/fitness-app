@@ -3,7 +3,7 @@ spring:
       name: aiservice
 
   mongodb:
-    ***REMOVED***
+    uri: mongodb+srv://rahulkumar230501_db_user:youpassword@airecommendationdb.qojuob8.mongodb.net/?appName=airecommendationdb
     database: airecommendationdb
 
   kafka:
